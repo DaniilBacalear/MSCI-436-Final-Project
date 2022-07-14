@@ -1,7 +1,7 @@
-## Title
-436 final project
+# 436 final project
 
-## Starting Up The App
+
+## Starting up the app
 1. Create a new notebook within google colab
 2. Clone this repo and go to the projects root directory by running the following commands within a google colab code block \
   ```!git clone https://github.com/DaniilBacalear/MSCI-436-Final-Project.git``` \
