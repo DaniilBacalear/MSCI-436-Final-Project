@@ -7,5 +7,4 @@ if uploaded_file is not None:
     dataframe = pd.read_csv(uploaded_file)
     print('loading model')
     df = evaluate_csv(dataframe)
-    df = df.drop([''])
-    st.dataframe(evaluate_csv(dataframe))
+    st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest", "newbalanceDest", "isFraud", "predictedIsFraud"]])
