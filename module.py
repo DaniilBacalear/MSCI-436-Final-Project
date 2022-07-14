@@ -8,8 +8,8 @@ import pandas as pd
 spark = SparkSession.builder.master("local[*]").getOrCreate()
 spark.conf.set("spark.sql.repl.eagerEval.enabled", True) # Property used to format output tables bettern
 
-model = LogisticRegressionModel.load('/content/drive/MyDrive/436-model/436-model')
-pipeline = PipelineModel.load('/content/drive/MyDrive/436-model/436-pipeline')
+model = LogisticRegressionModel.load('436-model')
+pipeline = PipelineModel.load('436-pipeline')
 
 def evaluate_csv(pd_data):
     df = spark.createDataFrame(pd_data)
