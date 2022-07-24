@@ -1,23 +1,29 @@
 from module import evaluate_csv
 import pandas as pd
+# import pyautogui
 import streamlit as st
 import matplotlib.pyplot as plt
 
 
+def add_spaces(n):
+    for _ in range(n):
+        st.write("")
+
+
 def get_prediction(data_set):
-    dataframe = pd.read_csv(data_set)
-    print('loading model')
-    prediction = evaluate_csv(dataframe)
+    df = pd.read_csv(data_set)
+    prediction = evaluate_csv(df)
     return prediction
 
 
-def display_prediction(prediction):
-    st.dataframe(prediction[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
+def display_prediction(df):
+    st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
                              "newbalanceDest", "isFraud", "predictedIsFraud"]])
 
 
-def make_pi_chart(prediction):
-    fraud_percentage = (prediction['predictedIsFraud'].sum() / len(prediction['predictedIsFraud'])) * 100
+def display_pi_chart(df):
+    print("making pi chart")
+    fraud_percentage = (df['predictedIsFraud'].sum() / len(df['predictedIsFraud'])) * 100
     valid_percentage = 100 - fraud_percentage
     labels = 'Fraudulent', 'Valid'
     colors = ['#E52C04', '#1EEC06']
@@ -30,10 +36,27 @@ def make_pi_chart(prediction):
     st.pyplot(fig1)
 
 
+def display_metrics(df: pd.DataFrame):
+    total_transactions, fraud_count, total_fraud_amount = st.columns(3)
+    total_transactions.metric(label="Total Transactions Analyzed", value=len(df))
+    fraud_count.metric(label="Fraudulent Transactions Detected", value=len(df[df.predictedIsFraud == 1]))
+    total_fraud_amount.metric(label="Total Fraud Amount ($)", value=sum(df[df.predictedIsFraud == 1]["amount"]))
+
+
 uploaded_file = st.file_uploader('upload csv', type=['csv'], accept_multiple_files=False, key="fileUploader")
 
 if uploaded_file is not None:
     prediction = get_prediction(uploaded_file)
+    add_spaces(1)
+    st.title("Predictions")
     display_prediction(prediction)
-    make_pi_chart(prediction)
+    add_spaces(2)
+    st.title("Metrics")
+    display_metrics(prediction)
+    add_spaces(3)
+    st.title("Fraudulent vs Valid Transactions")
+    display_pi_chart(prediction)
+    # if st.button(label="Clear Results"):
+    #     pyautogui.hotkey("ctrl", "F5")
+
 
