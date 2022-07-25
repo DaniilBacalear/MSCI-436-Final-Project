@@ -8,7 +8,6 @@ streamlit = "==1.10.0"
 pyspark = "==3.3.0"
 matplotlib = "==3.5.2"
 pandas = "~=1.4.3"
-pyautogui = "*"
 scikit-learn = "*"
 
 [dev-packages]

@@ -1,7 +1,6 @@
 from module import evaluate_csv
 from sklearn import metrics
 import pandas as pd
-# import pyautogui
 import streamlit as st
 import matplotlib.pyplot as plt
 
@@ -70,8 +69,6 @@ if uploaded_file is not None:
     add_spaces(3)
     st.title("Fraudulent vs Valid Transactions")
     display_pi_chart(prediction)
-    # if st.button(label="Clear Results"):
-    #     pyautogui.hotkey("ctrl", "F5")
     if "isFraud" in prediction.columns:
         add_spaces(3)
         st.title("Confusion Matrix")
