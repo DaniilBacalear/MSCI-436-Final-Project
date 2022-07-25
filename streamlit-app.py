@@ -19,12 +19,13 @@ def get_prediction(data_set) -> pd.DataFrame:
 
 
 def display_prediction(df):
+    highlight_fraud = lambda row: ['background: red' if row.predictedIsFraud == 1 else '' for col in row]
     if "isFraud" in df.columns:
         st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
-                             "newbalanceDest", "isFraud", "predictedIsFraud"]])
+                         "newbalanceDest", "isFraud", "predictedIsFraud"]].style.apply(highlight_fraud, axis=1))
     else:
         st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
-                         "newbalanceDest", "predictedIsFraud"]])
+                         "newbalanceDest", "predictedIsFraud"]].style.apply(highlight_fraud, axis=1))
 
 
 def display_pi_chart(df):
@@ -50,8 +51,9 @@ def display_metrics(df: pd.DataFrame):
 
 
 def display_confusion_matrix(df: pd.DataFrame):
-    confusion_matrix = metrics.confusion_matrix(prediction["isFraud"], prediction["predictedIsFraud"])
-    confusion_matrix_output = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=[False, True])
+    confusion_matrix = metrics.confusion_matrix(df["isFraud"], df["predictedIsFraud"])
+    confusion_matrix_output = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix,
+                                                             display_labels=[False, True])
     confusion_matrix_output.plot()
     st.pyplot()
 
