@@ -1,8 +1,11 @@
 from module import evaluate_csv
+from sklearn import metrics
 import pandas as pd
 # import pyautogui
 import streamlit as st
 import matplotlib.pyplot as plt
+
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 def add_spaces(n):
@@ -10,15 +13,19 @@ def add_spaces(n):
         st.write("")
 
 
-def get_prediction(data_set):
+def get_prediction(data_set) -> pd.DataFrame:
     df = pd.read_csv(data_set)
     prediction = evaluate_csv(df)
     return prediction
 
 
 def display_prediction(df):
-    st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
+    if "isFraud" in df.columns:
+        st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
                              "newbalanceDest", "isFraud", "predictedIsFraud"]])
+    else:
+        st.dataframe(df[["amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest",
+                         "newbalanceDest", "predictedIsFraud"]])
 
 
 def display_pi_chart(df):
@@ -43,6 +50,13 @@ def display_metrics(df: pd.DataFrame):
     total_fraud_amount.metric(label="Total Fraud Amount ($)", value=sum(df[df.predictedIsFraud == 1]["amount"]))
 
 
+def display_confusion_matrix(df: pd.DataFrame):
+    confusion_matrix = metrics.confusion_matrix(prediction["isFraud"], prediction["predictedIsFraud"])
+    confusion_matrix_output = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=[False, True])
+    confusion_matrix_output.plot()
+    st.pyplot()
+
+
 uploaded_file = st.file_uploader('upload csv', type=['csv'], accept_multiple_files=False, key="fileUploader")
 
 if uploaded_file is not None:
@@ -58,5 +72,7 @@ if uploaded_file is not None:
     display_pi_chart(prediction)
     # if st.button(label="Clear Results"):
     #     pyautogui.hotkey("ctrl", "F5")
-
-
+    if "isFraud" in prediction.columns:
+        add_spaces(3)
+        st.title("Confusion Matrix")
+        display_confusion_matrix(prediction)
